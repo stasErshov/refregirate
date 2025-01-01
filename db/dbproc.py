@@ -19,9 +19,16 @@ class Database:
     def add_user(self, id, username, email, number):
         with self._connect() as conn:
             cursor = conn.cursor()
-            query = 'INSERT INTO users (id, name, email, number, admin) VALUES (?, ?, ?, ?, ?);'
-            cursor.execute(query, (id, username, email, number, 0))
-            conn.commit()
+            query = '''SELECT 1 FROM users WHERE id = ? '''
+            data = (id,)
+            result = cursor.fetchone()
+            if result:
+                query = 'INSERT INTO users (id, name, email, number, admin) VALUES (?, ?, ?, ?, ?);'
+                cursor.execute(query, (id, username, email, number, 0))
+                conn.commit()
+                return True
+            else:
+                return False
 
     def get_users(self):
         with self._connect() as conn:
@@ -31,4 +38,4 @@ class Database:
             return cursor.fetchall()
 
     def close(self):
-        pass  # Закрывать ничего не нужно, так как каждое подключение открывается и закрывается отдельно
+        pass

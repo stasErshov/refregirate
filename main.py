@@ -2,13 +2,10 @@ import telebot
 import db
 from db.dbproc import Database
 
-# Токен вашего бота
 TOKEN = '2101819294:AAGeDOJaOWpUcsxjGV8X6Z7JS4RbBX0j7qs'
 
-# Инициализация бота
 bot = telebot.TeleBot(TOKEN)
 
-# Инициализация базы данных
 db = Database('db/users.db')
 db.create_table()
 
@@ -17,8 +14,11 @@ db.create_table()
 def add_user(message):
     try:
         _, username, email = message.text.split(maxsplit=2)
-        db.add_user(message.chat.id, username, email, 1)
-        bot.reply_to(message, f"Пользователь {username} добавлен.")
+        bo = db.add_user(message.chat.id, username, email, 1)
+        if bo:
+            bot.reply_to(message, f"Пользователь {username} добавлен.")
+        else:
+            bot.reply_to(message, f"Такой пользователь уже существует.")
     except ValueError:
         bot.reply_to(message, "Не удалось добавить пользователя. Проверьте формат команды.")
 
