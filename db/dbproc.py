@@ -14,6 +14,8 @@ class Database:
             query = '''CREATE TABLE IF NOT EXISTS users ( "id"	INTEGER NOT NULL, "name"	TEXT NOT NULL, 
             "email"	TEXT NOT NULL, "number"	INTEGER NOT NULL, "admin"	INTEGER NOT NULL );'''
             cursor.execute(query)
+            query = '''CREATE TABLE IF NOT EXISTS "values" ( "id" INTEGER NOT NULL, "weight"	INTEGER NOT NULL,
+	        "city"	TEXT NOT NULL, "product" TEXT NOT NULL)'''
             conn.commit()
 
     def add_user(self, id, username, email, number):
@@ -36,6 +38,13 @@ class Database:
             query = 'SELECT * FROM users;'
             cursor.execute(query)
             return cursor.fetchall()
+
+    def add_values(self, id, weight, city, product):
+        with self._connect() as conn:
+            cursor = conn.cursor()
+            query = 'INSERT INTO "values" (id, weight, city, product) VALUES (?, ?, ?, ?);'
+            cursor.execute(query, (id, weight, city, product))
+            conn.commit()
 
     def close(self):
         pass
