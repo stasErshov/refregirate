@@ -66,8 +66,7 @@ def cancel_process(message):
 @bot.message_handler(commands=['test'])
 def test_command(message):
     chat_id = message.chat.id
-    print(db.get_values()[0])
-    print(mathmodule.MathModule.first_chapter(db.get_values()[0][1], db.get_values()[0][2], db.get_values()[0   ][3]))
+    print(mathmodule.MathModule.first_chapter(db.get_values()[0][1], db.get_values()[0][2], db.get_values()[0][3]))
     bot.send_message(chat_id, db.get_values())
 
 # Основная логика обработки сообщений

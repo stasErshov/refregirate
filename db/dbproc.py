@@ -16,6 +16,10 @@ class Database:
             cursor.execute(query)
             query = '''CREATE TABLE IF NOT EXISTS "values" ( "id" INTEGER NOT NULL, "weight"	INTEGER NOT NULL,
 	        "city"	TEXT NOT NULL, "product" TEXT NOT NULL)'''
+            cursor.execute(query)
+            query = '''CREATE TABLE IF NOT EXISTS "walls" ("id"	INTEGER NOT NULL, "luggageStorage"	INTEGER NOT NULL, "auxiliaryRoom"	INTEGER,
+	        "isolation"	INTEGER, "engineRoom"	INTEGER, "official"	INTEGER)'''
+            cursor.execute(query)
             conn.commit()
 
     def add_user(self, id, username, email, number):
