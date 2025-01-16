@@ -42,9 +42,16 @@ class Database:
     def add_values(self, id, weight, city, product):
         with self._connect() as conn:
             cursor = conn.cursor()
-            query = 'INSERT INTO "values" (id, weight, city, product) VALUES (?, ?, ?, ?);'
-            cursor.execute(query, (id, weight, city, product))
+            query = 'INSERT INTO "values" (id, city, weight, product) VALUES (?, ?, ?, ?);'
+            cursor.execute(query, (id, city, weight , product))
             conn.commit()
+
+    def get_values(self):
+        with self._connect() as conn:
+            cursor = conn.cursor()
+            query = f'SELECT * FROM "values" WHERE id = {773794732};'
+            cursor.execute(query)
+            return cursor.fetchall()
 
     def close(self):
         pass

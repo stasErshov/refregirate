@@ -12,7 +12,7 @@ class MathDatabase:
     def create_tablemath(self):
         with self._connect() as conn:
             cursor = conn.cursor()
-            query = '''CREATE TABLE "specificEnthalpy" (
+            query = '''CREATE TABLE IF NOT EXISTS "specificEnthalpy" (
 	                "product"	TEXT NOT NULL,
 	                "temp-20"	INTEGER,
 	                "temp-18"	INTEGER,
@@ -24,11 +24,11 @@ class MathDatabase:
 	                "temp-3"	INTEGER,
 	                "temp-2"	INTEGER,
 	                "temp-1"	INTEGER,
-	                "temp0"	INTEGER,
-	                "temp1"	INTEGER,
-	                "temp2"	INTEGER,
-	                "temp4"	INTEGER,
-	                "temp8"	INTEGER,
+	                "temp0"     INTEGER,
+	                "temp1"     INTEGER,
+	                "temp2"     INTEGER,
+	                "temp4"     INTEGER,
+	                "temp8"     INTEGER,
 	                "temp10"	INTEGER,
 	                "temp12"	INTEGER,
 	                "temp15"	INTEGER,
@@ -37,6 +37,11 @@ class MathDatabase:
 	                "temp30"	INTEGER,
 	                "temp35"	INTEGER,
 	                "temp40"	INTEGER);'''
+            cursor.execute(query)
+            query = '''CREATE TABLE IF NOT EXISTS "specificLoad" (
+	                "product"       TEXT NOT NULL,
+	                "storageType"	TEXT NOT NULL,
+	                "load"	        INTEGER NOT NULL);'''
             cursor.execute(query)
             conn.commit()
 

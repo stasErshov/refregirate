@@ -1,5 +1,7 @@
 import telebot
 import db
+import mathmodule
+from mathmodule import MathModule
 from db.mathdb import MathDatabase
 from db.dbproc import Database
 
@@ -37,11 +39,36 @@ def get_users(message):
 
 current_state = {}
 
-# Обработка команды /first
+# Команда /first
+# Команда /first
 @bot.message_handler(commands=['first'])
 def send_welcome(message):
-    bot.send_message(message.chat.id, "Отправьте мне название города.")
-    current_state[message.chat.id] = {'state': 'city'}
+    chat_id = message.chat.id
+    if chat_id in current_state:
+        bot.reply_to(message, "Вы уже начали ввод данных. Продолжайте, пожалуйста.")
+        return
+
+    bot.send_message(chat_id, "Отправьте мне название города.")
+    current_state[chat_id] = {
+        'state': 'city',
+        'data': {}
+    }
+
+# Команда /cancel для отмены текущего процесса ввода данных
+@bot.message_handler(commands=['cancel'])
+def cancel_process(message):
+    chat_id = message.chat.id
+    if chat_id in current_state:
+        del current_state[chat_id]
+        bot.send_message(chat_id, "Процесс ввода данных отменен.")
+
+# Команда /test
+@bot.message_handler(commands=['test'])
+def test_command(message):
+    chat_id = message.chat.id
+    print(db.get_values()[0])
+    print(mathmodule.MathModule.first_chapter(db.get_values()[0][1], db.get_values()[0][2], db.get_values()[0   ][3]))
+    bot.send_message(chat_id, db.get_values())
 
 # Основная логика обработки сообщений
 @bot.message_handler(func=lambda message: True)
@@ -49,36 +76,39 @@ def handle_message(message):
     chat_id = message.chat.id
 
     if chat_id not in current_state:
-        current_state[chat_id] = {'state': 'city'}
+        bot.send_message(chat_id, "Сначала начните ввод данных с помощью команды /first.")
+        return
 
     state = current_state[chat_id]['state']
+    data = current_state[chat_id]['data']
 
     if state == 'city':
         city = message.text.strip().capitalize()
-        current_state[chat_id]['city'] = city
+        data['city'] = city
         bot.send_message(chat_id, f"Вы указали город {city}. Теперь пришлите объем товара.")
         current_state[chat_id]['state'] = 'weight'
     elif state == 'weight':
         try:
             weight = float(message.text)
+            data['weight'] = weight
+            bot.send_message(chat_id, f"Теперь пришлите название товара.")
+            current_state[chat_id]['state'] = 'product'
         except ValueError:
             bot.send_message(chat_id, "Пожалуйста, введите корректное значение объема.")
             return
-
-        current_state[chat_id]['weight'] = weight
-        bot.send_message(chat_id, f"Теперь пришлите название товара.")
-        current_state[chat_id]['state'] = 'product'
     elif state == 'product':
         product = message.text.strip().capitalize()
+        data['product'] = product
 
         # Сохранение данных в БД
-        db.add_values(chat_id, current_state[chat_id]['city'], current_state[chat_id]['weight'], product)
+        db.add_values(chat_id, data['city'], data['weight'], product)
 
-        bot.send_message(chat_id, f"Данные сохранены: Город {current_state[chat_id]['city']}, Объем {current_state[chat_id]['weight']}, Товар {product}")
+        bot.send_message(chat_id, f"Данные сохранены: Город {data['city']}, Объем {data['weight']}, Товар {product}")
         del current_state[chat_id]
+        return
 
 # Запуск бота
 if __name__ == '__main__':
-    bot.polling()
+    bot.polling(none_stop=True)
     db.close()
     dbMath.close()
