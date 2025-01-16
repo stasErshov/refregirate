@@ -9,7 +9,6 @@ class MathModule:
     def first_chapter(city, weight, product):
         res_list = []
         weight = float(weight)
-        print(weight)
         if 12 <= weight <= 125:
             res = MathModule.calculate_size(weight, 12, 125, 2, 3)
         elif 250 <= weight <= 1000:
@@ -25,9 +24,14 @@ class MathModule:
         res_list.append(round(res_list[1] + res_list[0], 2))
         res_list.append(round(0.05 * res_list[2], 2))
         res_list.append(round(0.2 * res_list[2], 2))
-        for i in res_list:
-            print(math.ceil(i / 144))
-        return True
+
+        list_length = len(res_list)
+
+        for i in range(0, list_length):
+            res_list.append(math.ceil(res_list[i] / 144))
+        res_list.append(load[2])
+        res_list.append(res)
+        return res_list
 
     def calculate_size(weight, min_weight, max_weight, min_size, max_size):
         size_range = max_size - min_size

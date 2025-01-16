@@ -66,8 +66,23 @@ def cancel_process(message):
 @bot.message_handler(commands=['test'])
 def test_command(message):
     chat_id = message.chat.id
-    print(mathmodule.MathModule.first_chapter(db.get_values()[0][1], db.get_values()[0][2], db.get_values()[0][3]))
-    bot.send_message(chat_id, db.get_values())
+    res_list = MathModule.first_chapter(db.get_values()[0][1], db.get_values()[0][2], db.get_values()[0][3])
+    print(res_list)
+    bot.send_message(chat_id, f"Считаем строительную площадь камер хранения по формуле: `Fк.хр = Вк / (b * hгр * qv)`", parse_mode='Markdown')
+    bot.send_message(chat_id, f"Получается: `{res_list[0]} м^2 = {db.get_values()[0][2]} т / (0,75 * {res_list[1]} м * {res_list[10]} т/м^3)`", parse_mode='Markdown')
+    bot.send_message(chat_id, f"Считаем площадь вспомогательных помещений по формуле : `Fвсп = 0,25..0,4 * Fкхр`", parse_mode='Markdown')
+    bot.send_message(chat_id, f"Получается: `{res_list[1]} м^2 = 0,25 * {res_list[0]} м^2`", parse_mode='Markdown')
+    bot.send_message(chat_id, f"Считаем площадь холодильника в контуре изоляции по формуле  : `Fхол = Fк.хр + Fвсп`", parse_mode='Markdown')
+    bot.send_message(chat_id, f"Получается: `{res_list[2]} м^2 = {res_list[0]} м^2 + {res_list[1]} м^2`", parse_mode='Markdown')
+    bot.send_message(chat_id, f"Считаем площадь машинного отделения по формуле  : `Fмо = (0,05..0,35 * Fхол)`", parse_mode='Markdown')
+    bot.send_message(chat_id, f"Получается: `{res_list[3]} м^2 = 0,05 + {res_list[2]} м^2`", parse_mode='Markdown')
+    bot.send_message(chat_id, f"Считаем площадь служебных помещений по формуле   : `Fсп = (0,2..0,5 * Fхол)`", parse_mode='Markdown')
+    bot.send_message(chat_id, f"Получается: `{res_list[4]} м^2 = 0,2 * {res_list[2]} м^2`", parse_mode='Markdown')
+    bot.send_message(chat_id, f"Число строительных прямоугольников камер хранения: `{res_list[0]} / 144 = {res_list[5]}`", parse_mode='Markdown')
+    bot.send_message(chat_id, f"Число строительных прямоугольников вспомогательного помещения: `{res_list[1]} / 144 = {res_list[6]}`", parse_mode='Markdown')
+    bot.send_message(chat_id, f"Число строительных прямоугольников холодильника:  `{res_list[2]} / 144 = {res_list[7]}`", parse_mode='Markdown')
+    bot.send_message(chat_id, f"Число строительных прямоугольников машинного отделения:  `{res_list[3]} / 144 = {res_list[8]}`", parse_mode='Markdown')
+    bot.send_message(chat_id, f"Число строительных прямоугольников служебного помещения:  `{res_list[4]} / 144 = {res_list[9]}`", parse_mode='Markdown')
 
 # Основная логика обработки сообщений
 @bot.message_handler(func=lambda message: True)
